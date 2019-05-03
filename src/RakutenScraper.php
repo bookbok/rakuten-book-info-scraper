@@ -11,7 +11,7 @@
  * @license     MIT
  * @since       1.0.0
  */
-namespace Kentoka\BookScraper\Rakuten;
+namespace Kentoka\BookInfoScraper\Rakuten;
 
 use Kentoka\BookInfoScraper\AbstractIsbnScraper;
 use Kentoka\BookInfoScraper\Exception\DataProviderException;
