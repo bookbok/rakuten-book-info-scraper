@@ -157,11 +157,11 @@ class RakutenScraper extends AbstractIsbnScraper{
             return null;
         }
 
-        if(1 === $json["count"]){
+        if(1 !== $json["count"]){
             return null;
         }
 
-        return $this->generateBook($json["items"][0]["Item"]);
+        return $this->generateBook($json["Items"][0]["Item"]);
     }
 
     /**
@@ -213,7 +213,6 @@ class RakutenScraper extends AbstractIsbnScraper{
             throw new DataProviderException($e->getMessage(), $e->getCode(), $e);
         }
 
-
         $book
             ->setSubTitle("" !== $book->get("subTitle") ?: null)
             ->setDescription($book->get("itemCaption"))
@@ -241,7 +240,7 @@ class RakutenScraper extends AbstractIsbnScraper{
      * @throws \Exception
      */
     protected function generatePublishedAt(string $date): ?\DateTime{
-        if(1 !== preg_replace("/\A([0-9]+)年([0-9]+)月([0-9]+)日\z/u", $date, $m)){
+        if(1 !== preg_match("/\A([0-9]+)年([0-9]+)月([0-9]+)日\z/u", $date, $m)){
             return null;
         }
 
