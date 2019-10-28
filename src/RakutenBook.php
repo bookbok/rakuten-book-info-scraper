@@ -1,6 +1,6 @@
 <?php
 /**
- * kentoka/rakuten-book-info-scraper
+ * bookbok/rakuten-book-info-scraper
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.
@@ -11,9 +11,9 @@
  * @license     MIT
  * @since       1.0.0
  */
-namespace Kentoka\BookInfoScraper\Rakuten;
+namespace BookBok\BookInfoScraper\Rakuten;
 
-use Kentoka\BookInfoScraper\Information\Book;
+use BookBok\BookInfoScraper\Information\Book;
 
 /**
  *
@@ -37,10 +37,10 @@ class RakutenBook extends Book{
     }
 
     /**
-     * Get raw data.
+     * APIからのレスポンスデータを取得する。
      *
-     * @param string $accessKey
-     * @param mixed  $default
+     * @param string $accessKey レスポンスデータネームスペース以下のキー
+     * @param mixed  $default 値が存在しなかった場合のデフォルト値
      *
      * @return mixed|null
      */

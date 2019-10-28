@@ -1,6 +1,6 @@
 <?php
 /**
- * kentoka/rakuten-book-info-scraper
+ * bookbok/rakuten-book-info-scraper
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.
@@ -11,11 +11,11 @@
  * @license     MIT
  * @since       1.0.0
  */
-namespace Kentoka\BookInfoScraper\Rakuten;
+namespace BookBok\BookInfoScraper\Rakuten;
 
-use Kentoka\BookInfoScraper\AbstractIsbnScraper;
-use Kentoka\BookInfoScraper\Exception\DataProviderException;
-use Kentoka\BookInfoScraper\Information\BookInterface;
+use BookBok\BookInfoScraper\AbstractIsbnScraper;
+use BookBok\BookInfoScraper\Exception\DataProviderException;
+use BookBok\BookInfoScraper\Information\BookInterface;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -26,7 +26,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class RakutenScraper extends AbstractIsbnScraper{
 
-    private const API_URI    = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404";
+    private const API_URI = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404";
 
     /**
      * @var string
@@ -57,8 +57,8 @@ class RakutenScraper extends AbstractIsbnScraper{
     ){
         $this->setApplicationId($applicationId);
 
-        $this->client           = $client;
-        $this->requestFactory   = $requestFactory;
+        $this->client = $client;
+        $this->requestFactory = $requestFactory;
     }
 
     /**

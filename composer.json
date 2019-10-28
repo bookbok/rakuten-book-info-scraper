@@ -1,5 +1,5 @@
 {
-    "name": "kentoka/rakuten-book-info-scraper",
+    "name": "bookbok/rakuten-book-info-scraper",
     "description": "",
     "license": "MIT",
     "authors": [
@@ -11,21 +11,20 @@
     "require": {
         "php": "^7.2",
         "ext-json": "*",
-        "kentoka/book-info-scraper": "^0.4.1",
+        "bookbok/book-info-scraper": "^1.0",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0"
     },
     "autoload": {
         "psr-4": {
-            "Kentoka\\BookInfoScraper\\Rakuten\\": "src"
+            "BookBok\\BookInfoScraper\\Rakuten\\": "src"
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.0"
+        "squizlabs/php_codesniffer": "^3.5"
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Kentoka\\BookInfoScraper\\Tests\\Rakuten\\": "tests"
-        }
+    "scripts": {
+        "phpcs":"phpcs --standard=PSR12 src",
+        "phpcbf":"phpcbf --standard=PSR12 src"
     }
 }

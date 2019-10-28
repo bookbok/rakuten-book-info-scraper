@@ -1,6 +1,6 @@
 <?php
 /**
- * kentoka/rakuten-book-info-scraper
+ * bookbok/rakuten-book-info-scraper
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.
@@ -11,9 +11,9 @@
  * @license     MIT
  * @since       1.0.0
  */
-namespace Kentoka\BookInfoScraper\Rakuten;
+namespace BookBok\BookInfoScraper\Rakuten;
 
-use Kentoka\BookInfoScraper\Information\Author;
+use BookBok\BookInfoScraper\Information\Author;
 
 /**
  *
