@@ -1,4 +1,5 @@
 <?php
+
 /**
  * bookbok/rakuten-book-info-scraper
  *
@@ -11,6 +12,7 @@
  * @license     MIT
  * @since       1.0.0
  */
+
 namespace BookBok\BookInfoScraper\Rakuten;
 
 use BookBok\BookInfoScraper\Information\Author;
@@ -18,5 +20,6 @@ use BookBok\BookInfoScraper\Information\Author;
 /**
  *
  */
-class RakutenAuthor extends Author{
+class RakutenAuthor extends Author
+{
 }

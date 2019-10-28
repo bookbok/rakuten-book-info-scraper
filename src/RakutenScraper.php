@@ -1,4 +1,5 @@
 <?php
+
 /**
  * bookbok/rakuten-book-info-scraper
  *
@@ -11,6 +12,7 @@
  * @license     MIT
  * @since       1.0.0
  */
+
 namespace BookBok\BookInfoScraper\Rakuten;
 
 use BookBok\BookInfoScraper\AbstractIsbnScraper;
@@ -24,8 +26,8 @@ use Psr\Http\Message\RequestInterface;
 /**
  *
  */
-class RakutenScraper extends AbstractIsbnScraper{
-
+class RakutenScraper extends AbstractIsbnScraper
+{
     private const API_URI = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404";
 
     /**
@@ -36,128 +38,134 @@ class RakutenScraper extends AbstractIsbnScraper{
     /**
      * @var ClientInterface
      */
-    private $client;
+    private $httpClient;
 
     /**
      * @var RequestFactoryInterface
      */
-    private $requestFactory;
+    private $httpRequestFactory;
 
     /**
      * Constructor.
      *
      * @param string                  $applicationId
-     * @param ClientInterface         $client
-     * @param RequestFactoryInterface $requestFactory
+     * @param ClientInterface         $httpClient
+     * @param RequestFactoryInterface $httpRequestFactory
      */
     public function __construct(
         string $applicationId,
-        ClientInterface $client,
-        RequestFactoryInterface $requestFactory
-    ){
-        $this->setApplicationId($applicationId);
-
-        $this->client = $client;
-        $this->requestFactory = $requestFactory;
+        ClientInterface $httpClient,
+        RequestFactoryInterface $httpRequestFactory
+    ) {
+        $this
+            ->setApplicationId($applicationId)
+            ->setHttpClient($httpClient)
+            ->setHttpRequestFactory($httpRequestFactory)
+        ;
     }
 
     /**
-     * Get application id.
+     * Returns the api application id.
      *
      * @return string
      */
-    public function getApplicationId(): string{
+    protected function getApplicationId(): string
+    {
         return $this->applicationId;
     }
 
     /**
-     * Set application id.
+     * Set the api application id.
      *
-     * @param string $applicationId
+     * @param string $applicationId The api application id
      *
-     * @return void
+     * @return $this
      */
-    public function setApplicationId(string $applicationId): void{
-        if("" === $applicationId){
+    protected function setApplicationId(string $applicationId): RakutenScraper
+    {
+        if ("" === $applicationId) {
             throw new \InvalidArgumentException();
         }
 
-        $this->applicationId    = $applicationId;
+        $this->applicationId = $applicationId;
+
+        return $this;
     }
 
     /**
-     * Get http client.
+     * Returns the http client.
      *
      * @return ClientInterface
      */
-    public function getHttpClient(): ClientInterface{
-        return $this->client;
+    protected function getHttpClient(): ClientInterface
+    {
+        return $this->httpClient;
     }
 
     /**
-     * Set http client.
+     * Set the http client.
      *
-     * @param ClientInterface $client
+     * @param ClientInterface $client The http client
      *
-     * @return void
+     * @return $this
      */
-    public function setHttpClient(ClientInterface $client): void{
-        $this->client   = $client;
+    protected function setHttpClient(ClientInterface $client): RakutenScraper
+    {
+        $this->httpClient = $client;
+
+        return $this;
     }
 
     /**
-     * Get request factory.
+     * Returns the http request factory.
      *
      * @return RequestFactoryInterface
      */
-    public function getRequestFactory(): RequestFactoryInterface{
-        return $this->requestFactory;
+    protected function getHttpRequestFactory(): RequestFactoryInterface
+    {
+        return $this->httpRequestFactory;
     }
 
     /**
-     * Set request factory.
+     * Set the http request factory.
      *
-     * @param RequestFactoryInterface $requestFactory
+     * @param RequestFactoryInterface $httpRequestFactory The http request factory
      *
-     * @return void
+     * @return $this
      */
-    public function setRequestFactory(RequestFactoryInterface $requestFactory): void{
-        $this->requestFactory   = $requestFactory;
+    protected function setHttpRequestFactory(RequestFactoryInterface $httpRequestFactory): RakutenScraper
+    {
+        $this->httpRequestFactory = $httpRequestFactory;
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function scrape(string $id): ?BookInterface{
-        try{
-            $response   = $this->getHttpClient()->sendRequest(
-                $this->createRequest($id)
-            );
-        }catch(ClientExceptionInterface $e){
-            throw new DataProviderException(
-                $e->getMessage(),
-                $e->getCode(),
-                $e
-            );
+    public function scrape(string $id): ?BookInterface
+    {
+        try {
+            $response = $this->getHttpClient()->sendRequest($this->createRequest($id));
+        } catch (ClientExceptionInterface $e) {
+            throw new DataProviderException($e->getMessage(), $e->getCode(), $e);
         }
 
-        $json   = json_decode($response->getBody()->getContents(), true);
+        $json = json_decode($response->getBody()->getContents(), true);
 
-        if(JSON_ERROR_NONE !== json_last_error()){
+        if (JSON_ERROR_NONE !== json_last_error()) {
             throw new DataProviderException(json_last_error_msg());
         }
 
-        if(401 === $response->getStatusCode()){
-            throw new DataProviderException(
-                $json["error_description"] ?? "application id is invalid."
-            );
+        if (401 === $response->getStatusCode()) {
+            throw new DataProviderException($json["error_description"] ?? "application id is invalid.");
         }
 
-        if(200 !== $response->getStatusCode()){
+        if (200 !== $response->getStatusCode()) {
             return null;
         }
 
-        if(1 !== $json["count"]){
+        if (1 !== $json["count"]) {
             return null;
         }
 
@@ -167,60 +175,47 @@ class RakutenScraper extends AbstractIsbnScraper{
     /**
      * Create request instance.
      *
-     * @param string $id
+     * @param string $id The book id
      *
      * @return RequestInterface
      */
-    protected function createRequest(string $id): RequestInterface{
-        $data   = [
-            "format"        => "json",
-            "isbn"          => $id,
+    protected function createRequest(string $id): RequestInterface
+    {
+        $query = http_build_query([
+            "format" => "json",
+            "isbn" => $id,
             "applicationId" => $this->getApplicationId(),
-        ];
+        ]);
 
-        $query  = implode(
-            "&",
-            array_map(
-                function($key, $val){
-                    return $key . "=" . rawurlencode($val);
-                },
-                array_keys($data),
-                array_values($data)
-            )
-        );
-
-        return $this->getRequestFactory()
-            ->createRequest(
-                "GET",
-                static::API_URI . "?" . $query
-            )
+        return $this->getHttpRequestFactory()
+            ->createRequest("GET", static::API_URI . "?" . $query)
         ;
     }
 
     /**
      * Generate book instance.
      *
-     * @param mixed[] $data
+     * @param mixed[] $data The api response data
      *
      * @return BookInterface|null
      */
-    protected function generateBook(array $data): ?BookInterface{
-        $book       = new RakutenBook($data);
+    protected function generateBook(array $data): ?BookInterface
+    {
+        $book = new RakutenBook($data);
 
-        try{
-            $publishedAt    = $this->generatePublishedAt($book->get("salesDate", ""));
-        }catch(\Exception $e){
+        try {
+            $publishedAt = $this->generatePublishedAt($book->get("salesDate", ""));
+        } catch (\Exception $e) {
             throw new DataProviderException($e->getMessage(), $e->getCode(), $e);
         }
 
         $book
-            ->setSubTitle("" !== $book->get("subTitle") ?: null)
+            ->setSubTitle("" !== $book->get("subTitle") ? $book->get("subTitle") : null)
             ->setDescription($book->get("itemCaption"))
             ->setCoverUri($book->get("largeImageUrl"))
-            ->setAuthors(array_map(
-                function($author){return new RakutenAuthor(trim($author));},
-                explode("/", $book->get("author"))
-            ))
+            ->setAuthors(array_map(function ($author) {
+                return new RakutenAuthor(trim($author));
+            }, explode("/", $book->get("author"))))
             ->setPublisher($book->get("publisherName"))
             ->setPublishedAt($publishedAt)
             ->setPrice($book->get("itemPrice"))
@@ -233,14 +228,15 @@ class RakutenScraper extends AbstractIsbnScraper{
     /**
      * Generate published ad.
      *
-     * @param string $date
+     * @param string $date The date string
      *
      * @return \DateTime|null
      *
      * @throws \Exception
      */
-    protected function generatePublishedAt(string $date): ?\DateTime{
-        if(1 !== preg_match("/\A([0-9]+)年([0-9]+)月([0-9]+)日\z/u", $date, $m)){
+    protected function generatePublishedAt(string $date): ?\DateTime
+    {
+        if (1 !== preg_match("/\A([0-9]+)年([0-9]+)月([0-9]+)日\z/u", $date, $m)) {
             return null;
         }
 

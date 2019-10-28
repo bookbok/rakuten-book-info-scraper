@@ -1,4 +1,5 @@
 <?php
+
 /**
  * bookbok/rakuten-book-info-scraper
  *
@@ -11,6 +12,7 @@
  * @license     MIT
  * @since       1.0.0
  */
+
 namespace BookBok\BookInfoScraper\Rakuten;
 
 use BookBok\BookInfoScraper\Information\Book;
@@ -18,8 +20,8 @@ use BookBok\BookInfoScraper\Information\Book;
 /**
  *
  */
-class RakutenBook extends Book{
-
+class RakutenBook extends Book
+{
     /**
      * @var mixed[]
      */
@@ -28,11 +30,11 @@ class RakutenBook extends Book{
     /**
      * Constructor.
      *
-     * @param   mixed[] $data
+     * @param mixed[] $data APIからのレスポンスデータ
      */
-    public function __construct(array $data){
+    public function __construct(array $data)
+    {
         $this->data = $data;
-
         parent::__construct($this->get("isbn"), $this->get("title"));
     }
 
@@ -44,7 +46,8 @@ class RakutenBook extends Book{
      *
      * @return mixed|null
      */
-    public function get(string $accessKey, $default = null){
+    public function get(string $accessKey, $default = null)
+    {
         return $this->data[$accessKey] ?? $default;
     }
 }
